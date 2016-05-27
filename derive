@@ -4,12 +4,10 @@
 
 var eccrypto = require('eccrypto')
 
-var [
-  command, 
-  script, 
-  private_key, 
-  public_key
-] = process.argv
+var command = process.argv[0]
+var script = process.argv[1]
+var private_key  = process.argv[2]
+var public_key = process.argv[3]
 
 if (!(private_key && public_key)) {
   process.stdout.write(JSON.stringify({
@@ -31,7 +29,7 @@ try {
 }
 
 eccrypto.derive(
-  private_key, 
+  private_key,
   public_key
 ).then(function(shared_key) {
   process.stdout.write(JSON.stringify({shared_key: shared_key}))
