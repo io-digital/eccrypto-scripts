@@ -5,12 +5,12 @@
 var crypto = require('crypto')
 var eccrypto = require('eccrypto')
 
-var public_key = crypto.randomBytes(32).toString('hex')
-var private_key = eccrypto.getPublic(public_key).toString('hex')
+var private_key = crypto.randomBytes(32)
+var public_key = eccrypto.getPublic(private_key).toString('hex')
 
 process.stdout.write(JSON.stringify({
   public_key: public_key,
-  private_key: private_key
+  private_key: private_key.toString('hex')
 }))
 
 process.exit(0)
