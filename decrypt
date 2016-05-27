@@ -37,7 +37,7 @@ try {
 }
 
 eccrypto.decrypt(pk, m).then(function(decrypted) {
-  process.stdout.write(JSON.stringify(decrypted.toString()))
+  process.stdout.write(JSON.stringify({decrypted: decrypted.toString()}))
   process.exit(0)
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
