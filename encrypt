@@ -4,12 +4,10 @@
 
 var eccrypto = require('eccrypto')
 
-var [
-  command, 
-  script, 
-  public_key, 
-  message
-] = process.argv
+var command = process.argv[0]
+var script = process.argv[1]
+var public_key = process.argv[2]
+var message = process.argv[3]
 
 if (!(public_key && message)) {
   process.stdout.write(JSON.stringify({
@@ -22,7 +20,7 @@ var pk, m
 
 try {
   pk = Buffer.from(public_key, 'hex')
-  m = Buffer.from(message, 'hex')
+  m = message
 } catch (err) {
   process.stdout.write(JSON.stringify({
     error: 'public key or message is not a hexadecimal string'
@@ -31,7 +29,12 @@ try {
 }
 
 eccrypto.encrypt(pk, m).then(function(encrypted) {
-  process.stdout.write(JSON.stringify(encrypted))
+  process.stdout.write(JSON.stringify({
+    iv: encrypted.iv.toString('hex'),
+    ephemPublicKey: encrypted.ephemPublicKey.toString('hex'),
+    ciphertext: encrypted.ciphertext.toString('hex'),
+    mac: encrypted.mac.toString('hex')
+  }))
   process.exit(0)
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
