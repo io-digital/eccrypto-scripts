@@ -4,13 +4,11 @@
 
 var eccrypto = require('eccrypto')
 
-var [
-  command, 
-  script, 
-  public_key, 
-  message, 
-  signature
-] = process.argv
+var command = process.argv[0]
+var script = process.argv[1]
+var public_key = process.argv[2]
+var message = process.argv[3]
+var signature = process.argv[4]
 
 if (!(public_key && message && signature)) {
   process.stdout.write(JSON.stringify({
@@ -33,13 +31,11 @@ try {
 }
 
 eccrypto.verify(pk, m, s).then(function() {
-  process.stdout.write(JSON.stringify({
-    verified: true
-  }))
+  process.stdout.write(JSON.stringify({verified: true}))
   process.exit(0)
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
-    verified: false, error: err
+    verified: false, eccrypto_error: JSON.stringify(err)
   }))
   process.exit(1)
 })
