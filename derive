@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+'use strict'
+
+var eccrypto = require('eccrypto')
+
+var [
+  command, 
+  script, 
+  private_key, 
+  public_key
+] = process.argv
+
+if (!(private_key && public_key)) {
+  process.stdout.write(JSON.stringify({
+    error: 'private key or public key not given'
+  }))
+  process.exit(1)
+}
+
+var pka, pkb
+
+try {
+  pka = Buffer.from(private_key, 'hex')
+  pkb = Buffer.from(public_key, 'hex')
+} catch (err) {
+  process.stdout.write(JSON.stringify({
+    error: 'public key, message or signature is not a hexadecimal string'
+  }))
+  process.exit(1)
+}
+
+eccrypto.derive(
+  private_key, 
+  public_key
+).then(function(shared_key) {
+  process.stdout.write(JSON.stringify({shared_key: shared_key}))
+  process.exit(0)
+}).catch(function(err) {
+  process.stdout.write(JSON.stringify({
+    eccrypto_error: JSON.stringify(err || true)
+  }))
+  process.exit(1)
+})
