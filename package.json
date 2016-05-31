@@ -1,13 +1,18 @@
 {
   "name": "eccrypto-scripts",
   "version": "0.0.8",
-  "description": "",
+  "description": "a collection of reusable scripts for elliptic curve cryptography",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/io-digital/eccrypto-scripts.git"
+  },
+  "directories.bin": "bin",
+  "keywords": ["eccrypto", "elliptic", "curve", "crypto", "cryptography", "diffie-hellman", "bin"],
   "author": "Ant Cosentino <ant@io.co.za>",
-  "license": "Unlicensed",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "eccrypto": "^1.0.3"
   }
