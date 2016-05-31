@@ -28,10 +28,7 @@ try {
   process.exit(1)
 }
 
-eccrypto.derive(
-  pka,
-  pkb
-).then(function(shared_secret) {
+eccrypto.derive(pka, pkb).then(function(shared_secret) {
   process.stdout.write(JSON.stringify({shared_secret: shared_secret.toString('hex')}))
   process.exit(0)
 }).catch(function(err) {
