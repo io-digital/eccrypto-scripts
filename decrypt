@@ -31,13 +31,13 @@ try {
   }
 } catch (err) {
   process.stdout.write(JSON.stringify({
-    error: 'private key or message is not hexadecimal'
+    error: 'private key, iv, ephem, cipher or mac is not hexadecimal'
   }))
   process.exit(1)
 }
 
 eccrypto.decrypt(pk, m).then(function(decrypted) {
-  process.stdout.write(JSON.stringify({decrypted: decrypted.toString()}))
+  process.stdout.write(JSON.stringify({decrypted: decrypted.toString('hex')}))
   process.exit(0)
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
