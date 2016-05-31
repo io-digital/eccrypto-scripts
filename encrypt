@@ -16,14 +16,13 @@ if (!(public_key && message)) {
   process.exit(1)
 }
 
-var pk, m
+var pk, m = message
 
 try {
   pk = Buffer.from(public_key, 'hex')
-  m = message
 } catch (err) {
   process.stdout.write(JSON.stringify({
-    error: 'public key or message is not a hexadecimal string'
+    error: 'public key is not a hexadecimal string'
   }))
   process.exit(1)
 }
