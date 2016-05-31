@@ -1,14 +1,27 @@
 
 # eccrypto-scripts
 
-please refer to the source code of each script for required arguments and error conditions
-
-##### usage
-
-all scripts are flagged as executable, so something like:
-
+##### decrypt
 ```bash
-./new-keypair
+./decrypt "$private_key" "$input_vector" "$ephemeral_public_key" "$cipher_text" "$mac"
 ```
 
-will directly output json
+##### derive
+```bash
+./derive "$private_key" "$public_key"
+```
+
+##### encrypt
+```bash
+./encrypt "$public_key "$message"
+```
+
+##### sign
+```bash
+./sign "$private_key" "$message"
+```
+
+##### verify
+```
+./verify "$public_key" "$message" "$signature"
+```
