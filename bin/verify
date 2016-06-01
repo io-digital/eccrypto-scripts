@@ -2,6 +2,7 @@
 
 'use strict'
 
+var crypto = require('crypto')
 var eccrypto = require('eccrypto')
 
 var command = process.argv[0]
@@ -21,7 +22,7 @@ var pk, m, s
 
 try {
   pk = Buffer.from(public_key, 'hex')
-  m = Buffer.from(message, 'hex')
+  m = crypto.createHash('sha256').update(message).digest()
   s = Buffer.from(signature, 'hex')
 } catch (err) {
   process.stdout.write(JSON.stringify({
