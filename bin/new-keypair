@@ -5,10 +5,15 @@
 var crypto = require('crypto')
 var eccrypto = require('eccrypto')
 
+var mime = process.argv[2]
+
 var private_key = crypto.randomBytes(32)
 var public_key = eccrypto.getPublic(private_key)
 
-process.stdout.write(JSON.stringify({
+process.stdout.write(mime === '--plain' ? [
+  public_key.toString('hex'),
+  private_key.toString('hex')
+].join('\n') : JSON.stringify({
   public_key: public_key.toString('hex'),
   private_key: private_key.toString('hex')
 }))
