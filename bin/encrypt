@@ -16,7 +16,7 @@ if (!(public_key && message)) {
   process.exit(1)
 }
 
-var pk, m = Buffer.from(message)
+var pk, m = Buffer(message)
 
 try {
   pk = Buffer.from(public_key, 'hex')
