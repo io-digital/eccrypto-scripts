@@ -19,7 +19,7 @@ if (!(public_key && message)) {
 var pk, m = Buffer(message)
 
 try {
-  pk = Buffer.from(public_key, 'hex')
+  pk = Buffer(public_key, 'hex')
 } catch (err) {
   process.stdout.write(JSON.stringify({
     error: 'public key is not a hexadecimal string'

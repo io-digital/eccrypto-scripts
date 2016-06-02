@@ -22,12 +22,12 @@ if (!(private_key && iv && ephem && cipher && mac)) {
 var pk, m
 
 try {
-  pk = Buffer.from(private_key, 'hex')
+  pk = Buffer(private_key, 'hex')
   m = {
-    iv: Buffer.from(iv, 'hex'),
-    ephemPublicKey: Buffer.from(ephem, 'hex'),
-    ciphertext: Buffer.from(cipher, 'hex'),
-    mac: Buffer.from(mac, 'hex')
+    iv: Buffer(iv, 'hex'),
+    ephemPublicKey: Buffer(ephem, 'hex'),
+    ciphertext: Buffer(cipher, 'hex'),
+    mac: Buffer(mac, 'hex')
   }
 } catch (err) {
   process.stdout.write(JSON.stringify({

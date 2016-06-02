@@ -19,8 +19,8 @@ if (!(private_key && public_key)) {
 var pka, pkb
 
 try {
-  pka = Buffer.from(private_key, 'hex')
-  pkb = Buffer.from(public_key, 'hex')
+  pka = Buffer(private_key, 'hex')
+  pkb = Buffer(public_key, 'hex')
 } catch (err) {
   process.stdout.write(JSON.stringify({
     error: 'public key, message or signature is not a hexadecimal string'

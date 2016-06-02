@@ -20,7 +20,7 @@ if (!(private_key && message)) {
 var pk, m
 
 try {
-  pk = Buffer.from(private_key, 'hex')
+  pk = Buffer(private_key, 'hex')
   m = crypto.createHash('sha256').update(message).digest()
 } catch (err) {
   process.stdout.write(JSON.stringify({

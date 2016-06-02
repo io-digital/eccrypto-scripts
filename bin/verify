@@ -21,9 +21,9 @@ if (!(public_key && message && signature)) {
 var pk, m, s
 
 try {
-  pk = Buffer.from(public_key, 'hex')
+  pk = Buffer(public_key, 'hex')
   m = crypto.createHash('sha256').update(message).digest()
-  s = Buffer.from(signature, 'hex')
+  s = Buffer(signature, 'hex')
 } catch (err) {
   process.stdout.write(JSON.stringify({
     error: 'public key, message or signature is not a hexadecimal string'
