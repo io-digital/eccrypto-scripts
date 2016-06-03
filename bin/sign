@@ -16,39 +16,47 @@ var pk, m
 stdin.buffer().then(function(s) {
 
   if (!s.length && typeof message === 'undefined') {
-    process.stdout.write(JSON.stringify({
-      error: 'public key or message not given'
-    }))
-    process.exit(1)
+    return process.stdout.write(JSON.stringify({
+      error: 'message not given'
+    }), function() {
+      process.exit(1)
+    })
   }
 
   m = crypto.createHash('sha256').update(s || message).digest()
 
   if (!private_key) {
-    process.stdout.write(JSON.stringify({
-      error: 'private key or message not given'
-    }))
-    process.exit(1)
+    return process.stdout.write(JSON.stringify({
+      error: 'private key not given'
+    }), function() {
+      process.exit(1)
+    })
   }
 
   try {
     pk = Buffer(private_key, 'hex')
   } catch (err) {
-    process.stdout.write(JSON.stringify({
+    return process.stdout.write(JSON.stringify({
       error: 'private key is not a hexadecimal string'
-    }))
-    process.exit(1)
+    }), function() {
+      process.exit(1)
+    })
   }
 
   return eccrypto.sign(pk, m)
 
 }).then(function(signature) {
-  process.stdout.write(JSON.stringify({signature: signature.toString('hex')}))
-  process.exit(0)
+  process.stdout.write(JSON.stringify({
+    signature: signature.toString('hex')
+  }), function() {
+    process.exit(0)
+  })
+
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     error: 'signature creation failed',
     eccrypto_error: JSON.stringify(err || true)}
-  ))
-  process.exit(1)
+  ), function() {
+    process.exit(1)
+  })
 })
