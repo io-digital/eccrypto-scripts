@@ -15,43 +15,48 @@ var pk, m
 stdin.buffer().then(function(s) {
 
   if (!s.length && typeof message === 'undefined') {
-    process.stdout.write(JSON.stringify({
+    return process.stdout.write(JSON.stringify({
       error: 'public key or message not given'
-    }))
-    process.exit(1)
+    }), function() {
+      process.exit(1)
+    })
   }
 
   m = s || message
 
   if (!public_key) {
-    process.stdout.write(JSON.stringify({
+    return process.stdout.write(JSON.stringify({
       error: 'public key or message not given'
-    }))
-    process.exit(1)
+    }), function() {
+      process.exit(1)
+    })
   }
 
   try {
     pk = Buffer(public_key, 'hex')
   } catch (err) {
-    process.stdout.write(JSON.stringify({
+    return process.stdout.write(JSON.stringify({
       error: 'public key is not a hexadecimal string'
-    }))
-    process.exit(1)
+    }), function() {
+      process.exit(1)
+    })
   }
 
   return eccrypto.encrypt(pk, m)
-  
+
 }).then(function(encrypted) {
   process.stdout.write(JSON.stringify({
     iv: encrypted.iv.toString('hex'),
     ephemPublicKey: encrypted.ephemPublicKey.toString('hex'),
     ciphertext: encrypted.ciphertext.toString('hex'),
     mac: encrypted.mac.toString('hex')
-  }))
-  process.exit(0)
+  }), function() {
+    process.exit(0)
+  })
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     eccrypto_error: JSON.stringify(err)
-  }))
-  process.exit(1)
+  }), function() {
+    process.exit(1)
+  })
 })
