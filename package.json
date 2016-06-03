@@ -24,6 +24,7 @@
   "author": "Ant Cosentino <ant@io.co.za>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "eccrypto": "^1.0.3"
+    "eccrypto": "^1.0.3",
+    "get-stdin": "^5.0.1"
   }
 }

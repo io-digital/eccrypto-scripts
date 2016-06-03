@@ -2,6 +2,7 @@
 
 'use strict'
 
+var stdin = require('get-stdin')
 var eccrypto = require('eccrypto')
 
 var command = process.argv[0]
@@ -9,25 +10,38 @@ var script = process.argv[1]
 var public_key = process.argv[2]
 var message = process.argv[3]
 
-if (!(public_key && message)) {
-  process.stdout.write(JSON.stringify({
-    error: 'public key or message not given'
-  }))
-  process.exit(1)
-}
+var pk, m
 
-var pk, m = Buffer(message)
+stdin.buffer().then(function(s) {
 
-try {
-  pk = Buffer(public_key, 'hex')
-} catch (err) {
-  process.stdout.write(JSON.stringify({
-    error: 'public key is not a hexadecimal string'
-  }))
-  process.exit(1)
-}
+  if (!s.length && typeof message === 'undefined') {
+    process.stdout.write(JSON.stringify({
+      error: 'public key or message not given'
+    }))
+    process.exit(1)
+  }
 
-eccrypto.encrypt(pk, m).then(function(encrypted) {
+  m = s || message
+
+  if (!public_key) {
+    process.stdout.write(JSON.stringify({
+      error: 'public key or message not given'
+    }))
+    process.exit(1)
+  }
+
+  try {
+    pk = Buffer(public_key, 'hex')
+  } catch (err) {
+    process.stdout.write(JSON.stringify({
+      error: 'public key is not a hexadecimal string'
+    }))
+    process.exit(1)
+  }
+
+  return eccrypto.encrypt(pk, m)
+  
+}).then(function(encrypted) {
   process.stdout.write(JSON.stringify({
     iv: encrypted.iv.toString('hex'),
     ephemPublicKey: encrypted.ephemPublicKey.toString('hex'),
