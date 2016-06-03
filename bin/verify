@@ -8,35 +8,52 @@ var eccrypto = require('eccrypto')
 var command = process.argv[0]
 var script = process.argv[1]
 var public_key = process.argv[2]
-var message = process.argv[3]
-var signature = process.argv[4]
-
-if (!(public_key && message && signature)) {
-  process.stdout.write(JSON.stringify({
-    error: 'public key, message or signature not given'
-  }))
-  process.exit(1)
-}
+var signature = process.argv[3]
+var message = process.argv[4]
 
 var pk, m, s
 
-try {
-  pk = Buffer(public_key, 'hex')
-  m = crypto.createHash('sha256').update(message).digest()
-  s = Buffer(signature, 'hex')
-} catch (err) {
-  process.stdout.write(JSON.stringify({
-    error: 'public key, message or signature is not a hexadecimal string'
-  }))
-  process.exit(1)
-}
+stdin.buffer().then(function(s) {
 
-eccrypto.verify(pk, m, s).then(function() {
-  process.stdout.write(JSON.stringify({verified: true}))
-  process.exit(0)
+  if (!s.length && typeof message === 'undefined') {
+    return process.stdout.write(JSON.stringify({
+      error: 'message not given'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
+  m = crypto.createHash('sha256').update(s || message).digest()
+
+  if (!(public_key && signature)) {
+    return process.stdout.write(JSON.stringify({
+      error: 'public key or signature not given'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
+  try {
+    pk = Buffer(public_key, 'hex')
+    s = Buffer(signature, 'hex')
+  } catch (err) {
+    return process.stdout.write(JSON.stringify({
+      error: 'public key or signature is not a hexadecimal string'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
+  return eccrypto.verify(pk, m, s)
+
+}).then(function() {
+  process.stdout.write(JSON.stringify({verified: true}), function() {
+    process.exit(0)
+  })
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     verified: false, eccrypto_error: JSON.stringify(err)
-  }))
-  process.exit(1)
+  }), function() {
+    process.exit(1)
+  })
 })
