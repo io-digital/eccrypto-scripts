@@ -10,10 +10,11 @@ var private_key  = process.argv[2]
 var public_key = process.argv[3]
 
 if (!(private_key && public_key)) {
-  process.stdout.write(JSON.stringify({
+  return process.stdout.write(JSON.stringify({
     error: 'private key or public key not given'
-  }))
-  process.exit(1)
+  }), function() {
+    process.exit(1)
+  })
 }
 
 var pka, pkb
@@ -22,18 +23,23 @@ try {
   pka = Buffer(private_key, 'hex')
   pkb = Buffer(public_key, 'hex')
 } catch (err) {
-  process.stdout.write(JSON.stringify({
+  return process.stdout.write(JSON.stringify({
     error: 'public key, message or signature is not a hexadecimal string'
-  }))
-  process.exit(1)
+  }), function() {
+    process.exit(1)
+  })
 }
 
 eccrypto.derive(pka, pkb).then(function(shared_secret) {
-  process.stdout.write(JSON.stringify({shared_secret: shared_secret.toString('hex')}))
-  process.exit(0)
+  process.stdout.write(JSON.stringify({
+    shared_secret: shared_secret.toString('hex')
+  }), function() {
+    process.exit(0)
+  })
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     eccrypto_error: JSON.stringify(err || true)
-  }))
-  process.exit(1)
+  }), function() {
+    process.exit(1)
+  })
 })
