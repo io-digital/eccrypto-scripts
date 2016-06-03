@@ -16,6 +16,6 @@ process.stdout.write(mime === '--plain' ? [
 ].join('\n') : JSON.stringify({
   public_key: public_key.toString('hex'),
   private_key: private_key.toString('hex')
-}))
-
-process.exit(0)
+}), function() {
+  process.exit(0)
+})
