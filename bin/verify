@@ -3,6 +3,7 @@
 'use strict'
 
 var crypto = require('crypto')
+var stdin = require('get-stdin')
 var eccrypto = require('eccrypto')
 
 var command = process.argv[0]
