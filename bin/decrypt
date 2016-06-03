@@ -4,6 +4,7 @@
 
 var fs = require('fs')
 
+var stdin = require('get-stdin')
 var eccrypto = require('eccrypto')
 
 var command = process.argv[0]
