@@ -15,12 +15,12 @@ var ephem = process.argv[4]
 var mac = process.argv[5]
 var cipher = process.argv[6]
 
-var pk, m
+var pk, m = {}
 
 function d(private_key, message) {
   eccrypto.decrypt(private_key, message).then(function(decrypted) {
     process.stdout.write(JSON.stringify({
-      decrypted: decrypted.toString('hex')
+      decrypted: decrypted.toString()
     }), function() {
       process.exit(0)
     })
@@ -41,42 +41,78 @@ if (!(private_key && iv && ephem && mac)) {
 
 try {
   pk = Buffer(private_key, 'hex')
-  m = {
-    iv: Buffer(iv, 'hex'),
-    ephemPublicKey: Buffer(ephem, 'hex'),
-    mac: Buffer(mac, 'hex')
-  }
 } catch (err) {
   process.stdout.write(JSON.stringify({
-    error: 'private key, iv, ephem, or mac is not hexadecimal'
+    error: 'private key is not hexadecimal'
+  }))
+  process.exit(1)
+}
+
+try {
+  m.iv = Buffer(iv, 'hex')
+} catch (err) {
+  process.stdout.write(JSON.stringify({
+    error: 'iv is not hexadecimal'
+  }))
+  process.exit(1)
+}
+
+try {
+  m.ephemPublicKey = Buffer(ephem, 'hex')
+} catch (err) {
+  process.stdout.write(JSON.stringify({
+    error: 'ephemPublicKey is not hexadecimal'
+  }))
+  process.exit(1)
+}
+
+try {
+  m.mac = Buffer(mac, 'hex')
+} catch (err) {
+  process.stdout.write(JSON.stringify({
+    error: 'mac is not hexadecimal'
   }))
   process.exit(1)
 }
 
 stdin.buffer().then(function(s) {
   if (s.length) {
-    m.ciphertext = Buffer(s.toString().trim(), 'hex')
+    try {
+      m.ciphertext = Buffer(s.toString().trim(), 'hex')
+    } catch (err) {
+      process.stdout.write(JSON.stringify({
+        error: 'ciphertext is not hexadecimal'
+      }))
+      process.exit(1)
+    }
     d(pk, m)
   } else if (!cipher) {
     process.stdout.write(JSON.stringify({
-      error: 'cipher not given'
+      error: 'ciphertext not given'
     }))
     process.exit(1)
   } else {
     fs.readFile(cipher, function(err, buffer) {
       if (buffer && buffer.length) {
-        m.ciphertext = Buffer(buffer.toString().trim(), 'hex')
+        try {
+          m.ciphertext = Buffer(buffer.toString().trim(), 'hex')
+        } catch (err) {
+          process.stdout.write(JSON.stringify({
+            error: 'ciphertext is not hexadecimal'
+          }))
+          process.exit(1)
+        }
         d(pk, m)
       } else if (err && cipher.length) {
         try {
           m.ciphertext = Buffer(cipher, 'hex')
-          d(pk, m)
         } catch (err) {
           process.stdout.write(JSON.stringify({
-            error: 'cipher is not hexadecimal'
+            error: 'ciphertext is not hexadecimal'
           }))
           process.exit(1)
         }
+        d(pk, m)
       } else {
         process.exit(1)
       }
