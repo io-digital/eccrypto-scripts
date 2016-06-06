@@ -1,6 +1,13 @@
 
 # eccrypto-scripts
 
+##### testing
+
+```bash
+brew install bats
+./tests
+```
+
 ##### functions
 
 ```bash

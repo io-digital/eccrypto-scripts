@@ -18,6 +18,15 @@
   encrypted_a=$(echo -n $message_from_b | ./bin/encrypt "$pub_a")
   signable_a="$pub_a|$encrypted_a"
   read -r signature_b <<< $(echo "$signable_a" | ./bin/sign "$priv_b" | jq -r -c -M '.signature')
-  
+
   [[ $(echo "$signable_a" | ./bin/verify "$pub_b" "$signature_b" | jq -r -c -M '.verified') == 'true' ]]
+}
+
+@test "the same secret must be derived from two keypairs" {
+  read -r pub_a priv_a <<< $(./bin/new-keypair --plain)
+  read -r pub_b priv_b <<< $(./bin/new-keypair --plain)
+  secret_a=$(./bin/derive "$priv_a" "$pub_b" | jq -r -c -M '.shared_secret')
+  secret_b=$(./bin/derive "$priv_b" "$pub_a" | jq -r -c -M '.shared_secret')
+
+  [[ "$secret_a" == "$secret_b" ]]
 }
