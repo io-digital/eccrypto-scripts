@@ -65,7 +65,7 @@ stdin.buffer().then(function(s) {
   } else {
     fs.readFile(cipher, function(err, buffer) {
       if (buffer && buffer.length) {
-        m.ciphertext = buffer
+        m.ciphertext = Buffer(buffer.toString().trim(), 'hex')
         d(pk, m)
       } else if (err && cipher.length) {
         try {
