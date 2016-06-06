@@ -51,9 +51,7 @@ stdin.buffer().then(function(s) {
   return eccrypto.verify(pk, m, s)
 
 }).then(function() {
-  process.stdout.write(JSON.stringify({verified: true}), function() {
-    process.exit(0)
-  })
+  process.stdout.write(JSON.stringify({verified: true}))
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     verified: false, eccrypto_error: JSON.stringify(err)

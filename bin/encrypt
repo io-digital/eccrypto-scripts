@@ -50,9 +50,7 @@ stdin.buffer().then(function(s) {
     ephemPublicKey: encrypted.ephemPublicKey.toString('hex'),
     ciphertext: encrypted.ciphertext.toString('hex'),
     mac: encrypted.mac.toString('hex')
-  }), function() {
-    process.exit(0)
-  })
+  }))
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     eccrypto_error: JSON.stringify(err)

@@ -21,9 +21,7 @@ function d(private_key, message) {
   eccrypto.decrypt(private_key, message).then(function(decrypted) {
     process.stdout.write(JSON.stringify({
       decrypted: decrypted.toString()
-    }), function() {
-      process.exit(0)
-    })
+    }))
   }).catch(function(err) {
     process.stdout.write(JSON.stringify({
       eccrypto_error: JSON.stringify(err)
