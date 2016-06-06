@@ -1,0 +1,23 @@
+#!/usr/bin/env bats
+
+@test "encrypted message in must match decrypted message out" {
+  message_from_b='heyman'
+  read -r pub_a priv_a <<< $(./bin/new-keypair --plain)
+  read -r pub_b priv_b <<< $(./bin/new-keypair --plain)
+  encrypted_a=$(echo -n $message_from_b | ./bin/encrypt "$pub_a")
+  read -r iv_a ep_a ct_a mc_a <<< $(echo $encrypted_a | jq -r -c -M '.iv, .ephemPublicKey, .ciphertext, .mac')
+  decrypted_a=$(echo "$ct_a" | ./bin/decrypt "$priv_a" "$iv_a" "$ep_a" "$mc_a" | jq -r -c -M '.decrypted')
+
+  [[ "$message_from_b" == "$decrypted_a" ]]
+}
+
+@test "generated signatures must be verifiable" {
+  message_from_b='heyman'
+  read -r pub_a priv_a <<< $(./bin/new-keypair --plain)
+  read -r pub_b priv_b <<< $(./bin/new-keypair --plain)
+  encrypted_a=$(echo -n $message_from_b | ./bin/encrypt "$pub_a")
+  signable_a="$pub_a|$encrypted_a"
+  read -r signature_b <<< $(echo "$signable_a" | ./bin/sign "$priv_b" | jq -r -c -M '.signature')
+  
+  [[ $(echo "$signable_a" | ./bin/verify "$pub_b" "$signature_b" | jq -r -c -M '.verified') == 'true' ]]
+}
