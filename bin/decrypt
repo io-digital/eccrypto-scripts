@@ -15,56 +15,71 @@ var ephem = process.argv[4]
 var mac = process.argv[5]
 var cipher = process.argv[6]
 
-if (cipher && fs.statSync(cipher).isFile()) cipher = fs.readFileSync(cipher)
+var pk, m
 
-if (!(private_key && iv && ephem && mac)) {
-  return process.stdout.write(JSON.stringify({
-    error: 'private key, iv, ephem or mac not given'
-  }), function() {
+function d(private_key, message) {
+  eccrypto.decrypt(private_key, message).then(function(decrypted) {
+    process.stdout.write(JSON.stringify({
+      decrypted: decrypted.toString('hex')
+    }), function() {
+      process.exit(0)
+    })
+  }).catch(function(err) {
+    process.stdout.write(JSON.stringify({
+      eccrypto_error: JSON.stringify(err)
+    }))
     process.exit(1)
   })
 }
 
-var pk, m
+if (!(private_key && iv && ephem && mac)) {
+  process.stdout.write(JSON.stringify({
+    error: 'private key, iv, ephem or mac not given'
+  }))
+  process.exit(1)
+}
+
+try {
+  pk = Buffer(private_key, 'hex')
+  m = {
+    iv: Buffer(iv, 'hex'),
+    ephemPublicKey: Buffer(ephem, 'hex'),
+    mac: Buffer(mac, 'hex')
+  }
+} catch (err) {
+  process.stdout.write(JSON.stringify({
+    error: 'private key, iv, ephem, or mac is not hexadecimal'
+  }))
+  process.exit(1)
+}
 
 stdin.buffer().then(function(s) {
-
-  if (!s.length && typeof cipher === 'undefined') {
-    return process.stdout.write(JSON.stringify({
-      error: 'ciphertext not given'
-    }), function() {
-      process.exit(1)
-    })
-  }
-
-  try {
-    pk = Buffer(private_key, 'hex')
-    m = {
-      iv: Buffer(iv, 'hex'),
-      ephemPublicKey: Buffer(ephem, 'hex'),
-      ciphertext: s || Buffer(cipher, 'hex'),
-      mac: Buffer(mac, 'hex')
-    }
-  } catch (err) {
-    return process.stdout.write(JSON.stringify({
-      error: 'private key, iv, ephem, cipher or mac is not hexadecimal'
-    }), function() {
-      process.exit(1)
-    })
-  }
-
-  return eccrypto.decrypt(pk, m)
-
-}).then(function(decrypted) {
-  process.stdout.write(JSON.stringify({
-    decrypted: decrypted.toString()
-  }), function() {
-    process.exit(0)
-  })
-}).catch(function(err) {
-  process.stdout.write(JSON.stringify({
-    eccrypto_error: JSON.stringify(err)
-  }), function() {
+  if (s.length) {
+    m.ciphertext = Buffer(s.toString().trim(), 'hex')
+    d(pk, m)
+  } else if (!cipher) {
+    process.stdout.write(JSON.stringify({
+      error: 'cipher not given'
+    }))
     process.exit(1)
-  })
+  } else {
+    fs.readFile(cipher, function(err, buffer) {
+      if (buffer && buffer.length) {
+        m.ciphertext = buffer
+        d(pk, m)
+      } else if (err && cipher.length) {
+        try {
+          m.ciphertext = Buffer(cipher, 'hex')
+          d(pk, m)
+        } catch (err) {
+          process.stdout.write(JSON.stringify({
+            error: 'cipher is not hexadecimal'
+          }))
+          process.exit(1)
+        }
+      } else {
+        process.exit(1)
+      }
+    })
+  }
 })
