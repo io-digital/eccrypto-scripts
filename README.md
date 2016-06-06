@@ -1,7 +1,7 @@
 
 # eccrypto-scripts
 
-### functions
+##### functions
 
 ```bash
 
@@ -48,6 +48,7 @@ cat my-message.txt | ./verify "$public_key" "$signature" > verification.json
 ##### all together now...
 
 ```bash
+# this snippet requires jq (https://github.com/stedolan/jq)
 read -r pub_a priv_a <<< $(./bin/new-keypair --plain)
 read -r pub_b priv_b <<< $(./bin/new-keypair --plain)
 ./bin/encrypt $pub_a < file-from-b > encrypted_a
