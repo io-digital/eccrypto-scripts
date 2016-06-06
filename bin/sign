@@ -48,10 +48,7 @@ stdin.buffer().then(function(s) {
 }).then(function(signature) {
   process.stdout.write(JSON.stringify({
     signature: signature.toString('hex')
-  }), function() {
-    process.exit(0)
-  })
-
+  }))
 }).catch(function(err) {
   process.stdout.write(JSON.stringify({
     error: 'signature creation failed',
