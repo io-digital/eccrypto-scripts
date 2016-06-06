@@ -24,7 +24,10 @@ stdin.buffer().then(function(s) {
     })
   }
 
-  m = crypto.createHash('sha256').update(s || message).digest()
+  m = crypto.createHash('sha256').update(
+    s.toString().trim() ||
+    message
+  ).digest()
 
   if (!(public_key && signature)) {
     return process.stdout.write(JSON.stringify({
