@@ -21,7 +21,7 @@ brew install bats
 
 # or
 
-echo $ciphertext | ./decrypt "$private_key" \
+echo -n $ciphertext | ./decrypt "$private_key" \
               "$input_vector" \
               "$ephemeral_public_key" \
               "$mac" > decrypted.json
@@ -60,8 +60,8 @@ read -r pub_a priv_a <<< $(./bin/new-keypair --plain)
 read -r pub_b priv_b <<< $(./bin/new-keypair --plain)
 ./bin/encrypt $pub_a < file-from-b > encrypted_a
 signable_a="${pub_a}|$(cat encrypted_a)"
-read -r signature_b <<< $(echo $signable_a | ./bin/sign $priv_b | jq -r -c -M '.signature')
-echo $signable_a | ./bin/verify $pub_b $signature_b
+read -r signature_b <<< $(echo -n $signable_a | ./bin/sign $priv_b | jq -r -c -M '.signature')
+echo -n $signable_a | ./bin/verify $pub_b $signature_b
 read -r iv_a ep_a ct_a mc_a <<< $(cat encrypted_a | jq -r -c -M '.iv, .ephemPublicKey, .ciphertext, .mac')
-echo $ct_a | ./bin/decrypt $priv_a $iv_a $ep_a $mc_a
+echo -n $ct_a | ./bin/decrypt $priv_a $iv_a $ep_a $mc_a
 ```

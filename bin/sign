@@ -24,8 +24,7 @@ stdin.buffer().then(function(s) {
   }
 
   m = crypto.createHash('sha256').update(
-    s.toString().trim() ||
-    message
+    s.toString() || message
   ).digest()
 
   if (!private_key) {
