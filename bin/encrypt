@@ -16,13 +16,23 @@ stdin.buffer().then(function(s) {
 
   if (!s.length && typeof message === 'undefined') {
     return process.stdout.write(JSON.stringify({
-      error: 'public key or message not given'
+      error: 'message not given'
     }), function() {
       process.exit(1)
     })
+  } else if (!s.length && message.length) {
+    m = message
+  } else {
+    m = s
   }
 
-  m = s || message
+  if (!m.length) {
+      return process.stdout.write(JSON.stringify({
+          error: 'message of no length given'
+      }), function() {
+          process.exit(1)
+      })
+  }
 
   if (!public_key) {
     return process.stdout.write(JSON.stringify({
