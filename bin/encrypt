@@ -52,6 +52,16 @@ stdin.buffer().then(function(s) {
     })
   }
 
+  try {
+    m = Buffer(m, 'hex')
+  } catch (err) {
+    return process.stdout.write(JSON.stringify({
+      error: 'message is not a hexadecimal string'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
   return eccrypto.encrypt(pk, m)
 
 }).then(function(encrypted) {

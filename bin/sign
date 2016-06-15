@@ -23,8 +23,30 @@ stdin.buffer().then(function(s) {
     })
   }
 
-  m = crypto.createHash('sha256').update(
-    s.toString() || message
+  m = s.toString() || message
+
+  if (!m.length) {
+    return process.stdout.write(JSON.stringify({
+      error: 'message not given'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
+  try {
+    m = Buffer(m, 'hex')
+  } catch (err) {
+    return process.stdout.write(JSON.stringify({
+      error: 'message is not a hexadecimal string'
+    }), function() {
+      process.exit(1)
+    })
+  }
+
+  m = crypto.createHash(
+    'sha256'
+  ).update(
+    m.toString()
   ).digest()
 
   if (!private_key) {
